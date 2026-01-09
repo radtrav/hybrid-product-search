@@ -1,0 +1,21 @@
+services:
+  api: &main_app
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    image: reranker:${RERANKER_VERSION:-latest}
+    restart: always
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      RERANKER_HOST: 0.0.0.0
+      RERANKER_DB_FILE: /db_data/db.sqlite3
+    volumes:
+      - reranker-db-data:/db_data/
+
+
+
+volumes:
+  reranker-db-data:
+    name: reranker-db-data
