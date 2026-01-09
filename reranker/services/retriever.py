@@ -18,6 +18,14 @@ class BaseRetriever(ABC):
         :return: List of Candidate objects.
         """
 
+    @abstractmethod
+    async def retrieve_all(self) -> list[Candidate]:
+        """
+        Retrieve all available candidates.
+
+        :return: List of all Candidate objects.
+        """
+
 
 class MockRetriever(BaseRetriever):
     """Mock retriever that fetches from SQLite database."""
@@ -33,6 +41,28 @@ class MockRetriever(BaseRetriever):
         :return: List of Candidate objects.
         """
         products = await self.product_dao.get_by_product_ids(candidate_ids)
+
+        return [
+            Candidate(
+                id=product.product_id,
+                title=product.title,
+                description=product.description,
+                category=product.category,
+                price=product.price,
+                rating=product.rating,
+                num_reviews=product.num_reviews,
+                score=None,
+            )
+            for product in products
+        ]
+
+    async def retrieve_all(self) -> list[Candidate]:
+        """
+        Retrieve all candidates from the database.
+
+        :return: List of all Candidate objects.
+        """
+        products = await self.product_dao.get_all_products()
 
         return [
             Candidate(

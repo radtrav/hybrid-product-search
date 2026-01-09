@@ -42,10 +42,11 @@ class Settings(BaseSettings):
     db_file: Path = TEMP_DIR / "db.sqlite3"
     db_echo: bool = False
 
+    # TODO: add semantinc feature
     # Reranking configuration
     rerank_default_weights: dict[str, float] = {
-        "text_match": 0.4,
-        "price": 0.2,
+        "text_match": 0.6,
+        "price": 0.0, # don't optimize for price by default
         "rating": 0.2,
         "popularity": 0.2,
     }

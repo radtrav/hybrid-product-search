@@ -69,3 +69,61 @@ class RerankResponse(BaseModel):
             },
         },
     )
+
+
+class SearchRequest(BaseModel):
+    """Request for searching and getting best matches."""
+
+    query: str = Field(..., min_length=1, description="Search query")
+    top_k: int = Field(
+        default=10,
+        ge=1,
+        le=20,
+        description="Number of top results to return",
+    )
+    weights: dict[str, float] | None = Field(
+        None,
+        description="Optional custom weights for features",
+    )
+
+    model_config = ConfigDict(
+        json_schema_extra={
+            "example": {
+                "query": "wireless headphones",
+                "top_k": 3,
+                "weights": {"text_match": 0.5, "price": 0.2, "rating": 0.3},
+            },
+        },
+    )
+
+
+class SearchResponse(BaseModel):
+    """Response containing best matching candidates."""
+
+    query: str = Field(..., description="Original query")
+    results: list[Candidate] = Field(
+        ...,
+        description="Top matching candidates with scores",
+    )
+    count: int = Field(..., description="Number of results returned")
+
+    model_config = ConfigDict(
+        json_schema_extra={
+            "example": {
+                "query": "wireless headphones",
+                "results": [
+                    {
+                        "id": "prod_1",
+                        "title": "Wireless Bluetooth Headphones",
+                        "description": "Premium over-ear headphones...",
+                        "category": "Electronics",
+                        "price": 199.99,
+                        "rating": 4.5,
+                        "num_reviews": 1024,
+                        "score": 0.89,
+                    },
+                ],
+                "count": 1,
+            },
+        },
+    )

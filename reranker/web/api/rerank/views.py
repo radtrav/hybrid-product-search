@@ -3,7 +3,12 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from reranker.services.reranker import Reranker
 from reranker.services.retriever import MockRetriever
 from reranker.settings import settings
-from reranker.web.api.rerank.schema import RerankRequest, RerankResponse
+from reranker.web.api.rerank.schema import (
+    RerankRequest,
+    RerankResponse,
+    SearchRequest,
+    SearchResponse,
+)
 
 router = APIRouter()
 
@@ -51,4 +56,47 @@ async def rerank_candidates(
         query=request.query,
         candidates=reranked,
         count=len(reranked),
+    )
+
+
+@router.post("/search", response_model=SearchResponse)
+async def search_best_matches(
+    request: SearchRequest,
+    retriever: MockRetriever = Depends(),
+    reranker: Reranker = Depends(get_reranker),
+) -> SearchResponse:
+    """
+    Search for best matching products based on query.
+
+    Retrieves all available products, reranks them based on the query,
+    and returns the top K matches.
+
+    :param request: Search request with query and optional top_k limit.
+    :param retriever: Retriever dependency for fetching all products.
+    :param reranker: Reranker dependency for scoring.
+    :return: Top matching products with scores.
+    """
+    # Retrieve all candidates
+    all_candidates = await retriever.retrieve_all()
+
+    if not all_candidates:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="No products available in the database",
+        )
+
+    # Rerank all candidates
+    reranked = reranker.rerank(
+        candidates=all_candidates,
+        query=request.query,
+        weights=request.weights,
+    )
+
+    # Return top K results
+    top_results = reranked[: request.top_k]
+
+    return SearchResponse(
+        query=request.query,
+        results=top_results,
+        count=len(top_results),
     )

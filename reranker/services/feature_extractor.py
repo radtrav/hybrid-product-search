@@ -20,7 +20,7 @@ class FeatureExtractor:
             "rating": self._normalize_rating(candidate.rating),
             "popularity": self._normalize_popularity(candidate.num_reviews),
         }
-
+    # TODO change to BM30
     def _compute_text_match(self, candidate: Candidate, query: str) -> float:
         """
         Compute text matching score (simple overlap).
