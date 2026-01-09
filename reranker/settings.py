@@ -42,6 +42,15 @@ class Settings(BaseSettings):
     db_file: Path = TEMP_DIR / "db.sqlite3"
     db_echo: bool = False
 
+    # Reranking configuration
+    rerank_default_weights: dict[str, float] = {
+        "text_match": 0.4,
+        "price": 0.2,
+        "rating": 0.2,
+        "popularity": 0.2,
+    }
+    mock_products_file: Path = Path(__file__).parent / "data" / "mock_products.json"
+
     @property
     def db_url(self) -> URL:
         """

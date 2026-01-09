@@ -1,0 +1,92 @@
+[
+  {
+    "product_id": "prod_1",
+    "title": "Wireless Bluetooth Headphones",
+    "description": "Premium over-ear headphones with active noise cancellation and 30-hour battery life. Perfect for music lovers and professionals.",
+    "category": "Electronics",
+    "price": 199.99,
+    "rating": 4.5,
+    "num_reviews": 1024
+  },
+  {
+    "product_id": "prod_2",
+    "title": "USB-C Charging Cable",
+    "description": "Fast charging USB-C cable with durable braided design, 6ft length. Compatible with all USB-C devices.",
+    "category": "Electronics",
+    "price": 12.99,
+    "rating": 4.2,
+    "num_reviews": 567
+  },
+  {
+    "product_id": "prod_3",
+    "title": "Portable Power Bank 20000mAh",
+    "description": "High capacity portable charger with dual USB ports and LED indicator. Charges phones multiple times.",
+    "category": "Electronics",
+    "price": 39.99,
+    "rating": 4.7,
+    "num_reviews": 2341
+  },
+  {
+    "product_id": "prod_4",
+    "title": "Smart Watch Fitness Tracker",
+    "description": "Waterproof fitness tracker with heart rate monitor, sleep tracking, and 7-day battery. Track your health goals.",
+    "category": "Wearables",
+    "price": 89.99,
+    "rating": 4.3,
+    "num_reviews": 892
+  },
+  {
+    "product_id": "prod_5",
+    "title": "Mechanical Gaming Keyboard",
+    "description": "RGB backlit mechanical keyboard with customizable keys and wrist rest. Cherry MX switches for gaming.",
+    "category": "Gaming",
+    "price": 129.99,
+    "rating": 4.6,
+    "num_reviews": 1456
+  },
+  {
+    "product_id": "prod_6",
+    "title": "Wireless Gaming Mouse",
+    "description": "Ergonomic wireless mouse with high precision sensor, programmable buttons, and RGB lighting.",
+    "category": "Gaming",
+    "price": 79.99,
+    "rating": 4.4,
+    "num_reviews": 723
+  },
+  {
+    "product_id": "prod_7",
+    "title": "4K Webcam with Microphone",
+    "description": "Ultra HD webcam with built-in microphone and auto-focus. Perfect for video calls and streaming.",
+    "category": "Electronics",
+    "price": 149.99,
+    "rating": 4.1,
+    "num_reviews": 456
+  },
+  {
+    "product_id": "prod_8",
+    "title": "Bluetooth Speaker Waterproof",
+    "description": "Portable Bluetooth speaker with 360-degree sound, waterproof design, and 12-hour battery life.",
+    "category": "Electronics",
+    "price": 59.99,
+    "rating": 4.8,
+    "num_reviews": 1879
+  },
+  {
+    "product_id": "prod_9",
+    "title": "Laptop Stand Adjustable",
+    "description": "Aluminum laptop stand with adjustable height and angle. Improves posture and cooling.",
+    "category": "Accessories",
+    "price": 34.99,
+    "rating": 4.5,
+    "num_reviews": 634
+  },
+  {
+    "product_id": "prod_10",
+    "title": "Noise Cancelling Earbuds",
+    "description": "True wireless earbuds with active noise cancellation, touch controls, and wireless charging case.",
+    "category": "Electronics",
+    "price": 159.99,
+    "rating": 4.6,
+    "num_reviews": 1123
+  }
+]
