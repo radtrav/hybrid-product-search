@@ -26,7 +26,7 @@ class Reranker:
         weights: dict[str, float] | None = None,
     ) -> list[Candidate]:
         """
-        Rerank candidates using weighted feature scoring.
+        Rerank candidates using weighted feature scoring with BM25.
 
         :param candidates: List of candidates to rerank.
         :param query: User search query.
@@ -39,10 +39,25 @@ class Reranker:
         total_weight = sum(active_weights.values())
         normalized_weights = {k: v / total_weight for k, v in active_weights.items()}
 
-        # Score each candidate
-        scored_candidates = []
+        # First pass: extract raw features (with raw BM25 scores)
+        all_features = []
         for candidate in candidates:
-            features = self.feature_extractor.extract_features(candidate, query)
+            features = self.feature_extractor.extract_features(
+                candidate, query, all_candidates=candidates
+            )
+            all_features.append(features)
+
+        # Normalize BM25 scores
+        bm25_scores = [f["text_match"] for f in all_features]
+        normalized_bm25 = self._normalize_scores(bm25_scores)
+
+        # Update features with normalized BM25
+        for features, norm_bm25 in zip(all_features, normalized_bm25):
+            features["text_match"] = norm_bm25
+
+        # Score each candidate with normalized features
+        scored_candidates = []
+        for candidate, features in zip(candidates, all_features):
             score = sum(
                 features.get(feature_name, 0.0) * weight
                 for feature_name, weight in normalized_weights.items()
@@ -56,3 +71,21 @@ class Reranker:
         scored_candidates.sort(key=lambda c: c.score or 0.0, reverse=True)
 
         return scored_candidates
+
+    def _normalize_scores(self, scores: list[float]) -> list[float]:
+        """
+        Min-max normalize scores to [0, 1].
+
+        :param scores: List of scores to normalize.
+        :return: Normalized scores.
+        """
+        if not scores:
+            return []
+
+        min_score = min(scores)
+        max_score = max(scores)
+
+        if max_score == min_score:
+            return [0.5] * len(scores)
+
+        return [(score - min_score) / (max_score - min_score) for score in scores]

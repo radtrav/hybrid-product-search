@@ -189,3 +189,154 @@ def test_reranker_scoring() -> None:
     # Results should be sorted by score
     scores = [c.score for c in reranked if c.score is not None]
     assert scores == sorted(scores, reverse=True)
+
+
+# BM25 Integration Tests
+
+
+def test_bm25_reranking_behavior() -> None:
+    """Test that BM25 ranks exact matches higher than partial matches."""
+    reranker = Reranker()
+
+    candidates = [
+        Candidate(
+            id="1",
+            title="wireless headphones premium",
+            description="High quality wireless headphones with advanced features",
+            category="Electronics",
+            price=199.99,
+            rating=4.5,
+            num_reviews=1000,
+        ),
+        Candidate(
+            id="2",
+            title="wireless speakers bluetooth",
+            description="Portable wireless speakers for home",
+            category="Electronics",
+            price=99.99,
+            rating=4.2,
+            num_reviews=500,
+        ),
+        Candidate(
+            id="3",
+            title="wired headphones studio",
+            description="Professional wired headphones for studio use",
+            category="Electronics",
+            price=149.99,
+            rating=4.7,
+            num_reviews=800,
+        ),
+    ]
+
+    # Query "wireless headphones" should rank candidate 1 highest
+    # because it has both "wireless" and "headphones" in the title
+    reranked = reranker.rerank(candidates, "wireless headphones", weights=None)
+
+    # Candidate 1 should be first (has both query terms)
+    assert reranked[0].id == "1"
+
+
+def test_bm25_rare_term_weighting() -> None:
+    """Test that BM25 weights rare terms more heavily than common terms."""
+    reranker = Reranker()
+
+    candidates = [
+        Candidate(
+            id="1",
+            title="unique specialized equipment",
+            description="Professional specialized equipment for experts",
+            category="Electronics",
+            price=500.0,
+            rating=4.5,
+            num_reviews=100,
+        ),
+        Candidate(
+            id="2",
+            title="common product item",
+            description="Common everyday product for general use",
+            category="Electronics",
+            price=50.0,
+            rating=4.0,
+            num_reviews=1000,
+        ),
+        Candidate(
+            id="3",
+            title="common product item",
+            description="Common everyday product for general use",
+            category="Electronics",
+            price=60.0,
+            rating=4.1,
+            num_reviews=900,
+        ),
+    ]
+
+    # Query with rare term "specialized" should rank candidate 1 highly
+    # even though "common" appears in more documents
+    reranked = reranker.rerank(
+        candidates, "specialized equipment", weights={"text_match": 1.0, "price": 0.0, "rating": 0.0, "popularity": 0.0}
+    )
+
+    # Candidate 1 should be first due to rare term "specialized"
+    assert reranked[0].id == "1"
+
+
+def test_bm25_length_normalization_integration() -> None:
+    """Test that BM25 length normalization affects scoring appropriately."""
+    reranker = Reranker()
+
+    candidates = [
+        Candidate(
+            id="1",
+            title="laptop computer",
+            description="Great device",
+            category="Electronics",
+            price=1000.0,
+            rating=4.5,
+            num_reviews=500,
+        ),
+        Candidate(
+            id="2",
+            title="laptop computer",
+            description=(
+                "Great device with many features including long battery life, "
+                "high resolution display, fast processor, lots of memory, "
+                "solid state drive, multiple ports, and excellent build quality"
+            ),
+            category="Electronics",
+            price=1000.0,
+            rating=4.5,
+            num_reviews=500,
+        ),
+    ]
+
+    # Both have same term frequency for "laptop", but candidate 1 is shorter
+    # BM25 length normalization should give shorter doc higher score
+    reranked = reranker.rerank(
+        candidates, "laptop", weights={"text_match": 1.0, "price": 0.0, "rating": 0.0, "popularity": 0.0}
+    )
+
+    # Shorter document should rank first
+    assert reranked[0].id == "1"
+
+
+def test_backward_compatibility() -> None:
+    """Test that feature extraction still works without all_candidates parameter."""
+    extractor = FeatureExtractor()
+
+    candidate = Candidate(
+        id="1",
+        title="wireless headphones",
+        description="premium quality",
+        category="Electronics",
+        price=199.99,
+        rating=4.5,
+        num_reviews=1000,
+    )
+
+    # Should work without all_candidates (backward compatibility)
+    features = extractor.extract_features(candidate, "wireless headphones")
+
+    assert "text_match" in features
+    assert 0 <= features["text_match"] <= 1
+    # Should fall back to simple overlap: 2/2 = 1.0
+    assert features["text_match"] == 1.0

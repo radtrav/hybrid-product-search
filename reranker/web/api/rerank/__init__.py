@@ -1,5 +1,6 @@
 """Rerank API."""
 
+from reranker.web.api.rerank.schema import Candidate, RerankRequest, RerankResponse
 from reranker.web.api.rerank.views import router
 
-__all__ = ["router"]
+__all__ = ["router", "Candidate", "RerankRequest", "RerankResponse"]
