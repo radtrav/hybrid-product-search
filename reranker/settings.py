@@ -46,7 +46,7 @@ class Settings(BaseSettings):
     # Reranking configuration
     rerank_default_weights: dict[str, float] = {
         "text_match": 0.6,
-        "price": 0.0, # don't optimize for price by default
+        "price": 0.0,  # don't optimize for price by default
         "rating": 0.2,
         "popularity": 0.2,
     }

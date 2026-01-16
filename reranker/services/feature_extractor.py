@@ -60,8 +60,8 @@ class FeatureExtractor:
         :param all_candidates: All candidates in the corpus.
         :return: Dictionary of term to IDF value.
         """
-        N = len(all_candidates)
-        doc_freq = {term: 0 for term in query_terms}
+        n_candidates = len(all_candidates)
+        doc_freq = dict.fromkeys(query_terms, 0)
 
         for candidate in all_candidates:
             doc_text = f"{candidate.title} {candidate.description}"
@@ -72,7 +72,7 @@ class FeatureExtractor:
 
         idf = {}
         for term, df in doc_freq.items():
-            idf[term] = math.log((N - df + 0.5) / (df + 0.5) + 1)
+            idf[term] = math.log((n_candidates - df + 0.5) / (df + 0.5) + 1)
 
         return idf
 

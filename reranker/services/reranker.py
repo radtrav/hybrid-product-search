@@ -52,12 +52,12 @@ class Reranker:
         normalized_bm25 = self._normalize_scores(bm25_scores)
 
         # Update features with normalized BM25
-        for features, norm_bm25 in zip(all_features, normalized_bm25):
+        for features, norm_bm25 in zip(all_features, normalized_bm25, strict=False):
             features["text_match"] = norm_bm25
 
         # Score each candidate with normalized features
         scored_candidates = []
-        for candidate, features in zip(candidates, all_features):
+        for candidate, features in zip(candidates, all_features, strict=False):
             score = sum(
                 features.get(feature_name, 0.0) * weight
                 for feature_name, weight in normalized_weights.items()

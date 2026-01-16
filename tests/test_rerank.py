@@ -273,7 +273,9 @@ def test_bm25_rare_term_weighting() -> None:
     # Query with rare term "specialized" should rank candidate 1 highly
     # even though "common" appears in more documents
     reranked = reranker.rerank(
-        candidates, "specialized equipment", weights={"text_match": 1.0, "price": 0.0, "rating": 0.0, "popularity": 0.0}
+        candidates,
+        "specialized equipment",
+        weights={"text_match": 1.0, "price": 0.0, "rating": 0.0, "popularity": 0.0},
     )
 
     # Candidate 1 should be first due to rare term "specialized"
@@ -312,7 +314,9 @@ def test_bm25_length_normalization_integration() -> None:
     # Both have same term frequency for "laptop", but candidate 1 is shorter
     # BM25 length normalization should give shorter doc higher score
     reranked = reranker.rerank(
-        candidates, "laptop", weights={"text_match": 1.0, "price": 0.0, "rating": 0.0, "popularity": 0.0}
+        candidates,
+        "laptop",
+        weights={"text_match": 1.0, "price": 0.0, "rating": 0.0, "popularity": 0.0},
     )
 
     # Shorter document should rank first
